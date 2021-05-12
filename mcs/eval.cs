@@ -46,7 +46,7 @@ namespace Mono.CSharp
 	/// </remarks>
 	public class Evaluator {
 
-		enum ParseMode {
+		public enum ParseMode {
 			// Parse silently, do not output any error messages
 			Silent,
 
@@ -631,7 +631,7 @@ namespace Mono.CSharp
 		// @partial_input: if @silent is true, then it returns whether the
 		// parsed expression was partial, and more data is needed
 		//
-		CSharpParser ParseString (ParseMode mode, string input, out bool partial_input)
+		public CSharpParser ParseString (ParseMode mode, string input, out bool partial_input)
 		{
 			partial_input = false;
 			Reset ();
