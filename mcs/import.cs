@@ -2202,15 +2202,7 @@ namespace Mono.CSharp
 			return a == assembly || a.IsFriendAssemblyTo (assembly);
 		}
 
-		// -- Fix for Unity IL2CPP (temporary, for Unhollower) --
-		private static readonly Dictionary<string, HashSet<string>> BLACKLIST = new Dictionary<string, HashSet<string>>
-		{
-			{ "Rigidbody2D", new HashSet<string> { "Cast", } },
-			{ "Collider2D", new HashSet<string> { "Cast", "Raycast" } },
-			{ "Texture2D", new HashSet<string> { "SetPixelDataImpl" } },
-			{ "Camera", new HashSet<string> { "CalculateProjectionMatrixFromPhysicalProperties" } },
-		};
-		// ------------------------------------------------------
+		public static HashSet<string> SignatureBlacklist = new HashSet<string> { };
 
 		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
 		{
@@ -2300,9 +2292,10 @@ namespace Mono.CSharp
 				foreach (var member in all) {
 
 					// -- FIX FOR UNITY IL2CPP --
-					if (!string.IsNullOrEmpty(declaringType?.Name))
+					if (declaringType.GetMetaInfo() is MetaType metaInfo && !string.IsNullOrEmpty(metaInfo.Namespace))
 					{
-						if (BLACKLIST.TryGetValue(declaringType.Name, out var set) && set.Any(it => member.Name.StartsWith(it)))
+						var sig = $"{metaInfo.Namespace}.{declaringType.Name}.{member.Name}";
+						if (SignatureBlacklist.Contains(sig))
 							continue;
 					}
 					// --------------------------
