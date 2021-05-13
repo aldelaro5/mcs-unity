@@ -79,6 +79,7 @@
     <Compile Include="assign.cs" />
     <Compile Include="async.cs" />
     <Compile Include="attribute.cs" />
+    <Compile Include="IL2CPP\Blacklist.cs" />
     <Compile Include="cfold.cs" />
     <Compile Include="class.cs" />
     <Compile Include="codegen.cs" />
