@@ -2202,8 +2202,6 @@ namespace Mono.CSharp
 			return a == assembly || a.IsFriendAssemblyTo (assembly);
 		}
 
-		public static HashSet<string> SignatureBlacklist = new HashSet<string> { };
-
 		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
 		{
 			//
@@ -2292,12 +2290,8 @@ namespace Mono.CSharp
 				foreach (var member in all) {
 
 					// -- FIX FOR UNITY IL2CPP --
-					if (declaringType.GetMetaInfo() is MetaType metaInfo && !string.IsNullOrEmpty(metaInfo.Namespace))
-					{
-						var sig = $"{metaInfo.Namespace}.{declaringType.Name}.{member.Name}";
-						if (SignatureBlacklist.Contains(sig))
-							continue;
-					}
+					if (IL2CPP.Blacklist.IsBlacklisted(declaringType, member))
+						continue;
 					// --------------------------
 
 					switch (member.MemberType) {
