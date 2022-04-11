@@ -211,11 +211,12 @@ namespace Mono.CSharp
 		public override ModuleBuilder CreateModuleBuilder ()
 		{
 			if (file_name == null)
-				return Builder.DefineDynamicModule (Name, false);
+				return Builder.DefineDynamicModule (Name);
 
 			return base.CreateModuleBuilder ();
 		}
 #endif
+
 		//
 		// Initializes the code generator
 		//
@@ -227,10 +228,14 @@ namespace Mono.CSharp
 			ResolveAssemblySecurityAttributes ();
 			var an = CreateAssemblyName ();
 
-			Builder = file_name == null ?
-				domain.DefineDynamicAssembly (an, access) :
-				domain.DefineDynamicAssembly (an, access, Dirname (file_name));
-			
+#if NET6_0
+			Builder = AssemblyBuilder.DefineDynamicAssembly(an, access);
+#else
+			Builder = Builder = file_name == null ?
+						domain.DefineDynamicAssembly(an, access) :
+						domain.DefineDynamicAssembly(an, access, Dirname(file_name));
+#endif
+
 			Builder.MarkCorlibInternal();
 
 			module.Create (this, CreateModuleBuilder ());
@@ -256,16 +261,16 @@ namespace Mono.CSharp
 #if !STATIC
 		protected override void SaveModule (PortableExecutableKinds pekind, ImageFileMachine machine)
 		{
-			try {
-				var module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-				var set_module_only = module_only.GetSetMethod (true);
+			//try {
+			//	var module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			//	var set_module_only = module_only.GetSetMethod (true);
 
-				set_module_only.Invoke (Builder, new object[] { true });
-			} catch {
-				base.SaveModule (pekind, machine);
-			}
+			//	set_module_only.Invoke (Builder, new object[] { true });
+			//} catch {
+			//	base.SaveModule (pekind, machine);
+			//}
 
-			Builder.Save (file_name, pekind, machine);
+			//Builder.Save (file_name, pekind, machine);
 		}
 #endif
 	}

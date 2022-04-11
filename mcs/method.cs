@@ -731,15 +731,15 @@ namespace Mono.CSharp {
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
-			if (declarative_security != null) {
-				foreach (var de in declarative_security) {
-#if STATIC
-					MethodBuilder.__AddDeclarativeSecurity (de);
-#else
-					MethodBuilder.AddDeclarativeSecurity (de.Key, de.Value);
-#endif
-				}
-			}
+//			if (declarative_security != null) {
+//				foreach (var de in declarative_security) {
+//#if STATIC
+//					MethodBuilder.__AddDeclarativeSecurity (de);
+//#else
+//					MethodBuilder.AddDeclarativeSecurity (de.Key, de.Value);
+//#endif
+//				}
+//			}
 
 			//
 			// Optimization but it also covers cases where we cannot check
@@ -1817,15 +1817,15 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (declarative_security != null) {
-				foreach (var de in declarative_security) {
-#if STATIC
-					ConstructorBuilder.__AddDeclarativeSecurity (de);
-#else
-					ConstructorBuilder.AddDeclarativeSecurity (de.Key, de.Value);
-#endif
-				}
-			}
+//			if (declarative_security != null) {
+//				foreach (var de in declarative_security) {
+//#if STATIC
+//					ConstructorBuilder.__AddDeclarativeSecurity (de);
+//#else
+//					ConstructorBuilder.AddDeclarativeSecurity (de.Key, de.Value);
+//#endif
+//				}
+//			}
 
 			block = null;
 		}
@@ -1882,8 +1882,9 @@ namespace Mono.CSharp {
 				return;
 
 #if !FULL_AOT_RUNTIME
-			var token = ConstructorBuilder.GetToken ();
-			int t = token.Token;
+			//var token = ConstructorBuilder.GetToken ();
+			//int t = token.Token;
+			int t = ConstructorBuilder.MetadataToken;
 #if STATIC
 			if (ModuleBuilder.IsPseudoToken (t))
 				t = Module.Builder.ResolvePseudoToken (t);
@@ -2218,8 +2219,9 @@ namespace Mono.CSharp {
 				return;
 
 #if !FULL_AOT_RUNTIME
-			var token = builder.GetToken ();
-			int t = token.Token;
+			//var token = builder.GetToken ();
+			//int t = token.Token;
+			int t = builder.MetadataToken;
 #if STATIC
 			if (ModuleBuilder.IsPseudoToken (t))
 				t = member.Module.Builder.ResolvePseudoToken (t);
@@ -2480,15 +2482,15 @@ namespace Mono.CSharp {
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
-			if (declarative_security != null) {
-				foreach (var de in declarative_security) {
-#if STATIC
-					method_data.MethodBuilder.__AddDeclarativeSecurity (de);
-#else
-					method_data.MethodBuilder.AddDeclarativeSecurity (de.Key, de.Value);
-#endif
-				}
-			}
+//			if (declarative_security != null) {
+//				foreach (var de in declarative_security) {
+//#if STATIC
+//					method_data.MethodBuilder.__AddDeclarativeSecurity (de);
+//#else
+//					method_data.MethodBuilder.AddDeclarativeSecurity (de.Key, de.Value);
+//#endif
+//				}
+//			}
 
 			block = null;
 		}

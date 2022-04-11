@@ -385,7 +385,7 @@ namespace Mono.CSharp
 			if (!ctx.BuiltinTypes.CheckDefinitions (module))
 				return false;
 
-			if (!assembly.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.Save))
+			if (!assembly.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.Run))
 				return false;
 
 			module.CreateContainer ();

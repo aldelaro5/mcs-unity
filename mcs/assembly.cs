@@ -480,19 +480,19 @@ namespace Mono.CSharp
 		{
 			var an = new AssemblyName (name);
 
-			if (public_key != null && Compiler.Settings.Target != Target.Module) {
-				if (delay_sign) {
-					an.SetPublicKey (public_key);
-				} else {
-					if (public_key.Length == 16) {
-						Report.Error (1606, "Could not sign the assembly. ECMA key can only be used to delay-sign assemblies");
-					} else if (private_key == null) {
-						Error_AssemblySigning ("The specified key file does not have a private key");
-					} else {
-						an.KeyPair = private_key;
-					}
-				}
-			}
+			//if (public_key != null && Compiler.Settings.Target != Target.Module) {
+			//	if (delay_sign) {
+			//		an.SetPublicKey (public_key);
+			//	} else {
+			//		if (public_key.Length == 16) {
+			//			Report.Error (1606, "Could not sign the assembly. ECMA key can only be used to delay-sign assemblies");
+			//		} else if (private_key == null) {
+			//			Error_AssemblySigning ("The specified key file does not have a private key");
+			//		} else {
+			//			an.KeyPair = private_key;
+			//		}
+			//	}
+			//}
 
 			return an;
 		}
@@ -508,7 +508,7 @@ namespace Mono.CSharp
 			// but returned ISymbolWriter does not have all what we need therefore some
 			// adaptor will be needed for now we alwayas emit MDB format when generating
 			// debug info
-			return Builder.DefineDynamicModule (module_name, module_name, false);
+			return Builder.DefineDynamicModule(module_name); //Builder.DefineDynamicModule (module_name, module_name, false);
 		}
 
 		public virtual void Emit ()
@@ -836,127 +836,127 @@ namespace Mono.CSharp
 
 		public void EmbedResources ()
 		{
-			//
-			// Add Win32 resources
-			//
-			if (Compiler.Settings.Win32ResourceFile != null) {
-				Builder.DefineUnmanagedResource (Compiler.Settings.Win32ResourceFile);
-			} else {
-				Builder.DefineVersionInfoResource (vi_product, 
-				                                   vi_product_version ?? pa_file_version ?? pa_assembly_version,
-				                                   vi_company,
-				                                   vi_copyright,
-				                                   vi_trademark);
-			}
+			////
+			//// Add Win32 resources
+			////
+			//if (Compiler.Settings.Win32ResourceFile != null) {
+			//	Builder.DefineUnmanagedResource (Compiler.Settings.Win32ResourceFile);
+			//} else {
+			//	Builder.DefineVersionInfoResource (vi_product, 
+			//	                                   vi_product_version ?? pa_file_version ?? pa_assembly_version,
+			//	                                   vi_company,
+			//	                                   vi_copyright,
+			//	                                   vi_trademark);
+			//}
 
 			if (Compiler.Settings.Win32IconFile != null) {
 				builder_extra.DefineWin32IconResource (Compiler.Settings.Win32IconFile);
 			}
 
-			if (Compiler.Settings.Resources != null) {
-				if (Compiler.Settings.Target == Target.Module) {
-					Report.Error (1507, "Cannot link resource file when building a module");
-				} else {
-					int counter = 0;
-					foreach (var res in Compiler.Settings.Resources) {
-						if (!File.Exists (res.FileName)) {
-							Report.Error (1566, "Error reading resource file `{0}'", res.FileName);
-							continue;
-						}
-
-						if (res.IsEmbeded) {
-							Stream stream;
-							if (counter++ < 10) {
-								stream = File.OpenRead (res.FileName);
-							} else {
-								// TODO: SRE API requires resource stream to be available during AssemblyBuilder::Save
-								// we workaround it by reading everything into memory to compile projects with
-								// many embedded resource (over 3500) references
-								stream = new MemoryStream (File.ReadAllBytes (res.FileName));
-							}
-
-							module.Builder.DefineManifestResource (res.Name, stream, res.Attributes);
-						} else {
-							Builder.AddResourceFile (res.Name, Path.GetFileName (res.FileName), res.Attributes);
-						}
-					}
-				}
-			}
+			//if (Compiler.Settings.Resources != null) {
+			//	if (Compiler.Settings.Target == Target.Module) {
+			//		Report.Error (1507, "Cannot link resource file when building a module");
+			//	} else {
+			//		int counter = 0;
+			//		foreach (var res in Compiler.Settings.Resources) {
+			//			if (!File.Exists (res.FileName)) {
+			//				Report.Error (1566, "Error reading resource file `{0}'", res.FileName);
+			//				continue;
+			//			}
+			//
+			//			if (res.IsEmbeded) {
+			//				Stream stream;
+			//				if (counter++ < 10) {
+			//					stream = File.OpenRead (res.FileName);
+			//				} else {
+			//					// TODO: SRE API requires resource stream to be available during AssemblyBuilder::Save
+			//					// we workaround it by reading everything into memory to compile projects with
+			//					// many embedded resource (over 3500) references
+			//					stream = new MemoryStream (File.ReadAllBytes (res.FileName));
+			//				}
+			//
+			//				module.Builder.DefineManifestResource (res.Name, stream, res.Attributes);
+			//			} else {
+			//				Builder.AddResourceFile (res.Name, Path.GetFileName (res.FileName), res.Attributes);
+			//			}
+			//		}
+			//	}
+			//}
 		}
 
 		public void Save ()
 		{
-			PortableExecutableKinds pekind = PortableExecutableKinds.ILOnly;
-			ImageFileMachine machine;
+//			PortableExecutableKinds pekind = PortableExecutableKinds.ILOnly;
+//			ImageFileMachine machine;
 
-			switch (Compiler.Settings.Platform) {
-			case Platform.X86:
-				pekind |= PortableExecutableKinds.Required32Bit;
-				machine = ImageFileMachine.I386;
-				break;
-			case Platform.X64:
-				pekind |= PortableExecutableKinds.PE32Plus;
-				machine = ImageFileMachine.AMD64;
-				break;
-			case Platform.IA64:
-				machine = ImageFileMachine.IA64;
-				break;
-			case Platform.AnyCPU32Preferred:
-#if STATIC
-				pekind |= PortableExecutableKinds.Preferred32Bit;
-				machine = ImageFileMachine.I386;
-				break;
-#else
-				throw new NotSupportedException ();
-#endif
-			case Platform.Arm:
-#if STATIC
-				machine = ImageFileMachine.ARM;
-				break;
-#else
-				throw new NotSupportedException ();
-#endif
-			case Platform.AnyCPU:
-			default:
-				machine = ImageFileMachine.I386;
-				break;
-			}
+//			switch (Compiler.Settings.Platform) {
+//			case Platform.X86:
+//				pekind |= PortableExecutableKinds.Required32Bit;
+//				machine = ImageFileMachine.I386;
+//				break;
+//			case Platform.X64:
+//				pekind |= PortableExecutableKinds.PE32Plus;
+//				machine = ImageFileMachine.AMD64;
+//				break;
+//			case Platform.IA64:
+//				machine = ImageFileMachine.IA64;
+//				break;
+//			case Platform.AnyCPU32Preferred:
+//#if STATIC
+//				pekind |= PortableExecutableKinds.Preferred32Bit;
+//				machine = ImageFileMachine.I386;
+//				break;
+//#else
+//				throw new NotSupportedException ();
+//#endif
+//			case Platform.Arm:
+//#if STATIC
+//				machine = ImageFileMachine.ARM;
+//				break;
+//#else
+//				throw new NotSupportedException ();
+//#endif
+//			case Platform.AnyCPU:
+//			default:
+//				machine = ImageFileMachine.I386;
+//				break;
+//			}
 
-			Compiler.TimeReporter.Start (TimeReporter.TimerType.OutputSave);
-			try {
-				if (Compiler.Settings.Target == Target.Module) {
-					SaveModule (pekind, machine);
-				} else {
-					Builder.Save (module.Builder.ScopeName, pekind, machine);
-				}
-			} catch (ArgumentOutOfRangeException) {
-				Report.Error (16, "Output file `{0}' exceeds the 4GB limit", name);
-			} catch (Exception e) {
-				Report.Error (16, "Could not write to file `{0}'. {1}", name, e.Message);
-			}
-			Compiler.TimeReporter.Stop (TimeReporter.TimerType.OutputSave);
+//			Compiler.TimeReporter.Start (TimeReporter.TimerType.OutputSave);
+//			try {
+//				if (Compiler.Settings.Target == Target.Module) {
+//					SaveModule (pekind, machine);
+//				} else {
+//					Builder.Save (module.Builder.ScopeName, pekind, machine);
+//				}
+//			} catch (ArgumentOutOfRangeException) {
+//				Report.Error (16, "Output file `{0}' exceeds the 4GB limit", name);
+//			} catch (Exception e) {
+//				Report.Error (16, "Could not write to file `{0}'. {1}", name, e.Message);
+//			}
+//			Compiler.TimeReporter.Stop (TimeReporter.TimerType.OutputSave);
 
-			// Save debug symbols file
-			if (symbol_writer != null && Compiler.Report.Errors == 0) {
-				// TODO: it should run in parallel
-				Compiler.TimeReporter.Start (TimeReporter.TimerType.DebugSave);
+//			// Save debug symbols file
+//			if (symbol_writer != null && Compiler.Report.Errors == 0) {
+//				// TODO: it should run in parallel
+//				Compiler.TimeReporter.Start (TimeReporter.TimerType.DebugSave);
 
-				var filename = file_name + ".mdb";
-				try {
-					// We mmap the file, so unlink the previous version since it may be in use
-					File.Delete (filename);
-				} catch {
-					// We can safely ignore
-				}
+//				var filename = file_name + ".mdb";
+//				try {
+//					// We mmap the file, so unlink the previous version since it may be in use
+//					File.Delete (filename);
+//				} catch {
+//					// We can safely ignore
+//				}
 
-				module.WriteDebugSymbol (symbol_writer);
+//				module.WriteDebugSymbol (symbol_writer);
 
-				using (FileStream fs = new FileStream (filename, FileMode.Create, FileAccess.Write)) {
-					symbol_writer.CreateSymbolFile (module.Builder.ModuleVersionId, fs);
-				}
+//				using (FileStream fs = new FileStream (filename, FileMode.Create, FileAccess.Write)) {
+//					symbol_writer.CreateSymbolFile (module.Builder.ModuleVersionId, fs);
+//				}
 
-				Compiler.TimeReporter.Stop (TimeReporter.TimerType.DebugSave);
-			}
+//				Compiler.TimeReporter.Stop (TimeReporter.TimerType.DebugSave);
+//			}
 		}
 
 		protected virtual void SaveModule (PortableExecutableKinds pekind, ImageFileMachine machine)
@@ -974,55 +974,55 @@ namespace Mono.CSharp
 
 		void SetEntryPoint ()
 		{
-			if (!Compiler.Settings.NeedsEntryPoint) {
-				if (Compiler.Settings.MainClass != null)
-					Report.Error (2017, "Cannot specify -main if building a module or library");
+			//if (!Compiler.Settings.NeedsEntryPoint) {
+			//	if (Compiler.Settings.MainClass != null)
+			//		Report.Error (2017, "Cannot specify -main if building a module or library");
 
-				return;
-			}
+			//	return;
+			//}
 
-			PEFileKinds file_kind;
+			//PEFileKinds file_kind;
 
-			switch (Compiler.Settings.Target) {
-			case Target.Library:
-			case Target.Module:
-				file_kind = PEFileKinds.Dll;
-				break;
-			case Target.WinExe:
-				file_kind = PEFileKinds.WindowApplication;
-				break;
-			default:
-				file_kind = PEFileKinds.ConsoleApplication;
-				break;
-			}
+			//switch (Compiler.Settings.Target) {
+			//case Target.Library:
+			//case Target.Module:
+			//	file_kind = PEFileKinds.Dll;
+			//	break;
+			//case Target.WinExe:
+			//	file_kind = PEFileKinds.WindowApplication;
+			//	break;
+			//default:
+			//	file_kind = PEFileKinds.ConsoleApplication;
+			//	break;
+			//}
 
-			if (entry_point == null) {
-				string main_class = Compiler.Settings.MainClass;
-				if (main_class != null) {
-					// TODO: Handle dotted names
-					var texpr = module.GlobalRootNamespace.LookupType (module, main_class, 0, LookupMode.IgnoreAccessibility, Location.Null);
-					if (texpr == null) {
-						Report.Error (1555, "Could not find `{0}' specified for Main method", main_class);
-						return;
-					}
+			//if (entry_point == null) {
+			//	string main_class = Compiler.Settings.MainClass;
+			//	if (main_class != null) {
+			//		// TODO: Handle dotted names
+			//		var texpr = module.GlobalRootNamespace.LookupType (module, main_class, 0, LookupMode.IgnoreAccessibility, Location.Null);
+			//		if (texpr == null) {
+			//			Report.Error (1555, "Could not find `{0}' specified for Main method", main_class);
+			//			return;
+			//		}
 
-					var mtype = texpr.MemberDefinition as ClassOrStruct;
-					if (mtype == null) {
-						Report.Error (1556, "`{0}' specified for Main method must be a valid class or struct", main_class);
-						return;
-					}
+			//		var mtype = texpr.MemberDefinition as ClassOrStruct;
+			//		if (mtype == null) {
+			//			Report.Error (1556, "`{0}' specified for Main method must be a valid class or struct", main_class);
+			//			return;
+			//		}
 
-					Report.Error (1558, mtype.Location, "`{0}' does not have a suitable static Main method", mtype.GetSignatureForError ());
-				} else {
-					string pname = file_name == null ? name : Path.GetFileName (file_name);
-					Report.Error (5001, "Program `{0}' does not contain a static `Main' method suitable for an entry point",
-						pname);
-				}
+			//		Report.Error (1558, mtype.Location, "`{0}' does not have a suitable static Main method", mtype.GetSignatureForError ());
+			//	} else {
+			//		string pname = file_name == null ? name : Path.GetFileName (file_name);
+			//		Report.Error (5001, "Program `{0}' does not contain a static `Main' method suitable for an entry point",
+			//			pname);
+			//	}
 
-				return;
-			}
+			//	return;
+			//}
 
-			Builder.SetEntryPoint (entry_point.MethodBuilder, file_kind);
+			//Builder.SetEntryPoint (entry_point.MethodBuilder, file_kind);
 		}
 
 		void Error_ObsoleteSecurityAttribute (Attribute a, string option)

@@ -322,15 +322,15 @@ namespace Mono.CSharp {
 		{
 			base.Emit ();
 
-			if (declarative_security != null) {
-				foreach (var de in declarative_security) {
-#if STATIC
-					TypeBuilder.__AddDeclarativeSecurity (de);
-#else
-					TypeBuilder.AddDeclarativeSecurity (de.Key, de.Value);
-#endif
-				}
-			}
+//			if (declarative_security != null) {
+//				foreach (var de in declarative_security) {
+//#if STATIC
+//					TypeBuilder.__AddDeclarativeSecurity (de);
+//#else
+//					TypeBuilder.AddDeclarativeSecurity (de.Key, de.Value);
+//#endif
+//				}
+//			}
 
 			var rtype = ReturnType.Type;
 			if (rtype != null) {
