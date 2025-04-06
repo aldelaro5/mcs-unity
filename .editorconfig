@@ -2,3 +2,7 @@
 
 # CS0436: Type conflicts with imported type
 dotnet_diagnostic.CS0436.severity = silent
+# SYSLIB0003: Type is obsolete
+dotnet_diagnostic.SYSLIB0003.severity = silent
+# SYSLIB0017: Type is obsolete and not supported
+dotnet_diagnostic.SYSLIB0017.severity = silent

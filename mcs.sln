@@ -3,44 +3,24 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mcs", "mcs\mcs.csproj", "{E4989E4C-0875-4528-9031-08E2C0E70103}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mcs", "mcs.csproj", "{E4989E4C-0875-4528-9031-08E2C0E70103}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{19D98D53-56BE-4F1F-830C-77E575A8A93E}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.gitignore = .gitignore
 	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
-		Release_net35|Any CPU = Release_net35|Any CPU
-		Release_net35|x64 = Release_net35|x64
-		Release_net35|x86 = Release_net35|x86
 		Release|Any CPU = Release|Any CPU
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E4989E4C-0875-4528-9031-08E2C0E70103}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E4989E4C-0875-4528-9031-08E2C0E70103}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E4989E4C-0875-4528-9031-08E2C0E70103}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{E4989E4C-0875-4528-9031-08E2C0E70103}.Debug|x64.Build.0 = Debug|Any CPU
-		{E4989E4C-0875-4528-9031-08E2C0E70103}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{E4989E4C-0875-4528-9031-08E2C0E70103}.Debug|x86.Build.0 = Debug|Any CPU
-		{E4989E4C-0875-4528-9031-08E2C0E70103}.Release_net35|Any CPU.ActiveCfg = Release_net35|Any CPU
-		{E4989E4C-0875-4528-9031-08E2C0E70103}.Release_net35|Any CPU.Build.0 = Release_net35|Any CPU
-		{E4989E4C-0875-4528-9031-08E2C0E70103}.Release_net35|x64.ActiveCfg = Release_net35|Any CPU
-		{E4989E4C-0875-4528-9031-08E2C0E70103}.Release_net35|x64.Build.0 = Release_net35|Any CPU
-		{E4989E4C-0875-4528-9031-08E2C0E70103}.Release_net35|x86.ActiveCfg = Release_net35|Any CPU
-		{E4989E4C-0875-4528-9031-08E2C0E70103}.Release_net35|x86.Build.0 = Release_net35|Any CPU
 		{E4989E4C-0875-4528-9031-08E2C0E70103}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4989E4C-0875-4528-9031-08E2C0E70103}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E4989E4C-0875-4528-9031-08E2C0E70103}.Release|x64.ActiveCfg = Release|Any CPU
-		{E4989E4C-0875-4528-9031-08E2C0E70103}.Release|x64.Build.0 = Release|Any CPU
-		{E4989E4C-0875-4528-9031-08E2C0E70103}.Release|x86.ActiveCfg = Release|Any CPU
-		{E4989E4C-0875-4528-9031-08E2C0E70103}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
