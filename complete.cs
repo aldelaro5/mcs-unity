@@ -14,6 +14,7 @@
 // statements even when the expression is incomplete (for example
 // completing inside a lambda
 //
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -166,10 +167,24 @@ namespace Mono.CSharp {
 					namespaced_partial = nexpr.Namespace.Name + "." + partial_name;
 
 				rc.CurrentMemberDefinition.GetCompletionStartingWith (namespaced_partial, results);
-				if (partial_name != null)
-					results = results.Select (l => l.Substring (partial_name.Length)).ToList ();
-			} else {
-				var r = MemberCache.GetCompletitionMembers (rc, expr_type, partial_name).Select (l => l.Name).Distinct();
+                IEnumerable<string> startsWithPartialName = [];
+                if (partial_name != null)
+                {
+                    startsWithPartialName = results
+                        .Where(l => l.StartsWith (partial_name))
+                        .Select(l => l.Substring (partial_name.Length))
+                        .Where(l => !string.IsNullOrEmpty(l.Trim()));
+                }
+                results = results
+                    .Where(l => l.StartsWith(namespaced_partial))
+                    .Select(l => l.Substring (namespaced_partial.Length).TrimStart('.'))
+                    .Where(l => !string.IsNullOrEmpty(l.Trim()))
+                    .Concat(startsWithPartialName)
+                    .ToList();
+
+                results.AddRange(nexpr.Namespace.CompletionGetTypesStartingWith(partial_name ?? String.Empty));
+            } else {
+				var r = MemberCache.GetCompletitionMembers (rc, expr_type, partial_name).Select (l => l.Name);
 				AppendResults (results, partial_name, r);
 			}
 
