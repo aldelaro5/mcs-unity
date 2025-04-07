@@ -698,6 +698,7 @@ namespace Mono.CSharp
 		{
 			var names = Evaluator.GetVarNames ();
 			results.AddRange (names.Where (l => l.StartsWith (prefix)));
+            results.AddRange(GlobalRootNamespace.CompletionGetTypesStartingWith(prefix));
 		}
 
 		public RootNamespace GetRootNamespace (string name)

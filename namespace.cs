@@ -95,7 +95,13 @@ namespace Mono.CSharp {
 		{
 			return alias_name + "::";
 		}
-	}
+
+        public override IEnumerable<string> CompletionGetTypesStartingWith(string prefix)
+        {
+            var res = base.CompletionGetTypesStartingWith (prefix);
+            return res.Concat(all_namespaces.Keys.Where(x => x.StartsWith(prefix))).Distinct();
+        }
+    }
 
 	public sealed class GlobalRootNamespace : RootNamespace
 	{
@@ -356,13 +362,13 @@ namespace Mono.CSharp {
 		//
 		// Completes types with the given `prefix'
 		//
-		public IEnumerable<string> CompletionGetTypesStartingWith (string prefix)
+		public virtual IEnumerable<string> CompletionGetTypesStartingWith (string prefix)
 		{
 			if (types == null)
 				return Enumerable.Empty<string> ();
 
 			var res = from item in types
-					  where item.Key.StartsWith (prefix) && item.Value.Any (l => (l.Modifiers & Modifiers.PUBLIC) != 0)
+					  where item.Key.StartsWith (prefix) // && item.Value.Any (l => (l.Modifiers & Modifiers.PUBLIC) != 0)
 					  select item.Key;
 
 			if (namespaces != null)
