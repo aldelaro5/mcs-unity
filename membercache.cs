@@ -843,7 +843,16 @@ namespace Mono.CSharp {
 				}
 			}
 
-			return matches;
+            if (container.BaseType != null)
+                matches.AddRange(GetCompletitionMembers(ctx, container.BaseType, name));
+
+            if (container.Interfaces != null)
+            {
+                foreach (TypeSpec containerInterface in container.Interfaces)
+                    matches.AddRange(GetCompletitionMembers(ctx, containerInterface, name));
+            }
+
+            return matches;
 		}
 
         private static bool IsCompilerGenerated(TypeSpec typeSpec)
