@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Mono.CSharp {
 
@@ -827,7 +828,16 @@ namespace Mono.CSharp {
 					if (!name_entry.IsAccessible (ctx))
 						continue;
 
-					if (name == null || name_entry.Name.StartsWith (name)) {
+                    switch (name_entry)
+                    {
+                        case TypeSpec typeSpec when IsCompilerGenerated(typeSpec):
+                        case MethodSpec methodSpec when IsCompilerGenerated(methodSpec):
+                        case FieldSpec fieldSpec when IsCompilerGenerated(fieldSpec):
+                        case PropertySpec propertySpec when IsCompilerGenerated(propertySpec):
+                            continue;
+                    }
+
+                    if (name == null || name_entry.Name.StartsWith (name)) {
 						matches.Add (name_entry);
 					}
 				}
@@ -836,7 +846,31 @@ namespace Mono.CSharp {
 			return matches;
 		}
 
-		//
+        private static bool IsCompilerGenerated(TypeSpec typeSpec)
+        {
+            return MetadataImporter.HasAttribute (CustomAttributeData.GetCustomAttributes (typeSpec.GetMetaInfo()),
+                "CompilerGeneratedAttribute", MetadataImporter.CompilerServicesNamespace);
+        }
+
+        private static bool IsCompilerGenerated(FieldSpec fieldSpec)
+        {
+            return MetadataImporter.HasAttribute (CustomAttributeData.GetCustomAttributes (fieldSpec.GetMetaInfo()),
+                "CompilerGeneratedAttribute", MetadataImporter.CompilerServicesNamespace);
+        }
+
+        private static bool IsCompilerGenerated(MethodSpec methodSpec)
+        {
+            return MetadataImporter.HasAttribute (CustomAttributeData.GetCustomAttributes (methodSpec.GetMetaInfo()),
+                "CompilerGeneratedAttribute", MetadataImporter.CompilerServicesNamespace);
+        }
+
+        private static bool IsCompilerGenerated(PropertySpec propertySpec)
+        {
+            return MetadataImporter.HasAttribute (CustomAttributeData.GetCustomAttributes (propertySpec.MetaInfo),
+                "CompilerGeneratedAttribute", MetadataImporter.CompilerServicesNamespace);
+        }
+
+        //
 		// Returns members of @iface only, base members are ignored
 		//
 		public static List<MethodSpec> GetInterfaceMethods (TypeSpec iface)
