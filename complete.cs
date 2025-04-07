@@ -169,7 +169,7 @@ namespace Mono.CSharp {
 				if (partial_name != null)
 					results = results.Select (l => l.Substring (partial_name.Length)).ToList ();
 			} else {
-				var r = MemberCache.GetCompletitionMembers (rc, expr_type, partial_name).Select (l => l.Name);
+				var r = MemberCache.GetCompletitionMembers (rc, expr_type, partial_name).Select (l => l.Name).Distinct();
 				AppendResults (results, partial_name, r);
 			}
 
