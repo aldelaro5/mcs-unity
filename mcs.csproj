@@ -16,7 +16,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
-    <DefineConstants>NET_4_0</DefineConstants>
+    <DefineConstants>NET_4_5</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MonoMod.Backports" Version="1.1.0-prerelease.2" />
