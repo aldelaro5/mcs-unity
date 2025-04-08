@@ -32,16 +32,13 @@ namespace Mono.CSharp {
 				if (name == null)
 					continue;
 
-				if (prefix != null && !name.StartsWith (prefix))
+				if (prefix != null && !name.StartsWith (prefix, StringComparison.OrdinalIgnoreCase))
 					continue;
 
 				if (results.Contains (name))
 					continue;
 
-				if (prefix != null)
-					results.Add (name.Substring (prefix.Length));
-				else
-					results.Add (name);
+				results.Add (name);
 			}
 		}
 
@@ -81,7 +78,7 @@ namespace Mono.CSharp {
 
 			ec.CurrentMemberDefinition.GetCompletionStartingWith (Prefix, results);
 
-			throw new CompletionResult (Prefix, results.Distinct ().Select (l => l.Substring (Prefix.Length)).ToArray ());
+			throw new CompletionResult (Prefix, results.Distinct ().ToArray ());
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -171,13 +168,12 @@ namespace Mono.CSharp {
                 if (partial_name != null)
                 {
                     startsWithPartialName = results
-                        .Where(l => l.StartsWith (partial_name))
-                        .Select(l => l.Substring (partial_name.Length))
+                        .Where(l => l.StartsWith (partial_name, StringComparison.OrdinalIgnoreCase))
                         .Where(l => !string.IsNullOrEmpty(l.Trim()));
                 }
                 results = results
-                    .Where(l => l.StartsWith(namespaced_partial))
-                    .Select(l => l.Substring (namespaced_partial.Length).TrimStart('.'))
+                    .Where(l => l.StartsWith(namespaced_partial, StringComparison.OrdinalIgnoreCase))
+                    .Select(l => l.Substring (namespaced_partial.LastIndexOf(".", StringComparison.Ordinal) + 1))
                     .Where(l => !string.IsNullOrEmpty(l.Trim()))
                     .Concat(startsWithPartialName)
                     .ToList();

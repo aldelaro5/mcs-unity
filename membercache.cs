@@ -566,7 +566,10 @@ namespace Mono.CSharp {
             {
                 if (name is null)
                     name = string.Empty;
-                entries = member_hash.Where(x => x.Key.StartsWith(name)).SelectMany(x => x.Value).ToList();
+                entries = member_hash
+                    .Where(x => x.Key.StartsWith(name, StringComparison.OrdinalIgnoreCase))
+                    .SelectMany(x => x.Value)
+                    .ToList();
             }
 
 			List<MethodSpec> candidates = null;
@@ -845,7 +848,7 @@ namespace Mono.CSharp {
                             continue;
                     }
 
-                    if (name == null || name_entry.Name.StartsWith (name)) {
+                    if (name == null || name_entry.Name.StartsWith (name, StringComparison.OrdinalIgnoreCase)) {
 						matches.Add (name_entry);
 					}
 				}

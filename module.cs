@@ -697,7 +697,7 @@ namespace Mono.CSharp
 		public override void GetCompletionStartingWith (string prefix, List<string> results)
 		{
 			var names = Evaluator.GetVarNames ();
-			results.AddRange (names.Where (l => l.StartsWith (prefix)));
+			results.AddRange (names.Where (l => l.StartsWith (prefix, StringComparison.OrdinalIgnoreCase)));
             results.AddRange(GlobalRootNamespace.CompletionGetTypesStartingWith(prefix));
 		}
 
