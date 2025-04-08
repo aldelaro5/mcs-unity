@@ -25,6 +25,8 @@ namespace Mono.CSharp
             if (asmPtr == UIntPtr.Zero)
                 return;
 
+            bool isOldMono = Environment.Version.Major <= 3;
+
             var offs =
                 // ref_count (4 + padding)
                 IntPtr.Size +
@@ -76,14 +78,18 @@ namespace Mono.CSharp
                 1 +
                 // ref_only
                 4 +
-                // wrap_non_exception_throws
-                1 +
-                // wrap_non_exception_throws_inited
-                1 +
-                // jit_optimizer_disabled
-                1 +
-                // jit_optimizer_disabled_inited
-                1 +
+                // These are only there on old mono
+                (
+                    isOldMono ? 0 :
+                    // wrap_non_exception_throws
+                    1 +
+                    // wrap_non_exception_throws_inited
+                    1 +
+                    // jit_optimizer_disabled
+                    1 +
+                    // jit_optimizer_disabled_inited
+                    1
+                ) +
                 // First byte of security manager flags (second byte has what we want)
                 1;
 
