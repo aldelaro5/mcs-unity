@@ -682,7 +682,7 @@ namespace Mono.CSharp
 			return host.GetSignatureForError ();
 		}
 
-		public ExtensionMethodCandidates LookupExtensionMethod (string name, int arity)
+		public ExtensionMethodCandidates LookupExtensionMethod (string name, int arity, bool nameIsPrefix)
 		{
 			return null;
 		}

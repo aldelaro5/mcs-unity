@@ -470,7 +470,7 @@ namespace Mono.CSharp
 				return tc.GetSignatureForError ();
 			}
 
-			public ExtensionMethodCandidates LookupExtensionMethod (string name, int arity)
+			public ExtensionMethodCandidates LookupExtensionMethod (string name, int arity, bool nameIsPrefix)
 			{
 				return null;
 			}

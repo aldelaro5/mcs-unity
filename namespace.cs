@@ -65,7 +65,7 @@ namespace Mono.CSharp {
 		//
 		// For better error reporting where compiler tries to guess missing using directive
 		//
-		public List<string> FindExtensionMethodNamespaces (IMemberContext ctx, string name, int arity)
+		public List<string> FindExtensionMethodNamespaces (IMemberContext ctx, string name, int arity, bool nameIsPrefix)
 		{
 			List<string> res = null;
 
@@ -73,7 +73,7 @@ namespace Mono.CSharp {
 				if (ns.Key.Length == 0)
 					continue;
 
-				var methods = ns.Value.LookupExtensionMethod (ctx, name, arity);
+				var methods = ns.Value.LookupExtensionMethod (ctx, name, arity, nameIsPrefix);
 				if (methods != null) {
 					if (res == null)
 						res = new List<string> ();
@@ -84,6 +84,23 @@ namespace Mono.CSharp {
 
 			return res;
 		}
+
+        public List<MethodSpec> LookupExtensionMethods (IMemberContext ctx, string name, int arity, bool nameIsPrefix)
+        {
+            List<MethodSpec> res = new();
+
+            foreach (var ns in all_namespaces) {
+                if (ns.Key.Length == 0)
+                    continue;
+
+                var methods = ns.Value.LookupExtensionMethod (ctx, name, arity, nameIsPrefix);
+                if (methods != null) {
+                    res.AddRange(methods);
+                }
+            }
+
+            return res;
+        }
 
 		public void RegisterNamespace (Namespace child)
 		{
@@ -380,7 +397,7 @@ namespace Mono.CSharp {
 		// 
 		// Looks for extension method in this namespace
 		//
-		public List<MethodSpec> LookupExtensionMethod (IMemberContext invocationContext, string name, int arity)
+		public List<MethodSpec> LookupExtensionMethod (IMemberContext invocationContext, string name, int arity, bool nameIsPrefix)
 		{
 			if (extension_method_types == null)
 				return null;
@@ -403,7 +420,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				var res = ts.MemberCache.FindExtensionMethods (invocationContext, name, arity);
+				var res = ts.MemberCache.FindExtensionMethods (invocationContext, name, arity, nameIsPrefix);
 				if (res == null)
 					continue;
 
@@ -882,7 +899,7 @@ namespace Mono.CSharp {
 			base.EmitContainer ();
 		}
 
-		public ExtensionMethodCandidates LookupExtensionMethod (IMemberContext invocationContext, string name, int arity, int position)
+		public ExtensionMethodCandidates LookupExtensionMethod (IMemberContext invocationContext, string name, int arity, int position, bool nameIsPrefix)
 		{
 			//
 			// Here we try to resume the search for extension method at the point
@@ -905,7 +922,7 @@ namespace Mono.CSharp {
 			ExtensionMethodCandidates candidates;
 			var container = this;
 			do {
-				candidates = container.LookupExtensionMethodCandidates (invocationContext, name, arity, ref position);
+				candidates = container.LookupExtensionMethodCandidates (invocationContext, name, arity, ref position, nameIsPrefix);
 				if (candidates != null || container.MemberName == null)
 					return candidates;
 
@@ -920,7 +937,7 @@ namespace Mono.CSharp {
 				while (mn != null) {
 					++position;
 
-					var methods = container_ns.LookupExtensionMethod (invocationContext, name, arity);
+					var methods = container_ns.LookupExtensionMethod (invocationContext, name, arity, nameIsPrefix);
 					if (methods != null) {
 						return new ExtensionMethodCandidates (invocationContext, methods, container, position);
 					}
@@ -936,14 +953,14 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		ExtensionMethodCandidates LookupExtensionMethodCandidates (IMemberContext invocationContext, string name, int arity, ref int position)
+		ExtensionMethodCandidates LookupExtensionMethodCandidates (IMemberContext invocationContext, string name, int arity, ref int position, bool nameIsPrefix)
 		{
 			List<MethodSpec> candidates = null;
 
 			if (position == 0) {
 				++position;
 
-				candidates = ns.LookupExtensionMethod (invocationContext, name, arity);
+				candidates = ns.LookupExtensionMethod (invocationContext, name, arity, nameIsPrefix);
 				if (candidates != null) {
 					return new ExtensionMethodCandidates (invocationContext, candidates, this, position);
 				}
@@ -953,7 +970,7 @@ namespace Mono.CSharp {
 				++position;
 
 				foreach (Namespace n in namespace_using_table) {
-					var a = n.LookupExtensionMethod (invocationContext, name, arity);
+					var a = n.LookupExtensionMethod (invocationContext, name, arity, nameIsPrefix);
 					if (a == null)
 						continue;
 
@@ -966,7 +983,7 @@ namespace Mono.CSharp {
 				if (types_using_table != null) {
 					foreach (var t in types_using_table) {
 
-						var res = t.MemberCache.FindExtensionMethods (invocationContext, name, arity);
+						var res = t.MemberCache.FindExtensionMethods (invocationContext, name, arity, nameIsPrefix);
 						if (res == null)
 							continue;
 
@@ -1607,7 +1624,7 @@ namespace Mono.CSharp {
 				throw new NotImplementedException ();
 			}
 
-			public ExtensionMethodCandidates LookupExtensionMethod (string name, int arity)
+			public ExtensionMethodCandidates LookupExtensionMethod (string name, int arity, bool nameIsPrefix)
 			{
 				return null;
 			}

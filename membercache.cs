@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Mono.CSharp {
@@ -555,11 +556,18 @@ namespace Mono.CSharp {
 		//
 		// Looks for extension methods with defined name and extension type
 		//
-		public List<MethodSpec> FindExtensionMethods (IMemberContext invocationContext, string name, int arity)
+		public List<MethodSpec> FindExtensionMethods (IMemberContext invocationContext, string name, int arity, bool nameIsPrefix)
 		{
-			IList<MemberSpec> entries;
-			if (!member_hash.TryGetValue (name, out entries))
+			IList<MemberSpec> entries = new List<MemberSpec>();
+			if (!nameIsPrefix && !member_hash.TryGetValue (name, out entries))
 				return null;
+
+            if (nameIsPrefix)
+            {
+                if (name is null)
+                    name = string.Empty;
+                entries = member_hash.Where(x => x.Key.StartsWith(name)).SelectMany(x => x.Value).ToList();
+            }
 
 			List<MethodSpec> candidates = null;
 			foreach (var entry in entries) {

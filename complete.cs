@@ -186,7 +186,17 @@ namespace Mono.CSharp {
             } else {
 				var r = MemberCache.GetCompletitionMembers (rc, expr_type, partial_name).Select (l => l.Name);
 				AppendResults (results, partial_name, r);
-			}
+                var extensionMethods = rc.Module.GlobalRootNamespace.LookupExtensionMethods(rc, partial_name, 0, true);
+                var metaType = expr_type.GetMetaInfo();
+                var typeInterfaces = metaType.GetInterfaces();
+                var extensions = extensionMethods
+                    .Select(x => new {extensionType = x.Parameters.Types[0].GetMetaInfo(), x.Name})
+                    .Where(x => x.extensionType.IsInterface
+                        ? typeInterfaces.Any(y => y.IsAssignableFrom(x.extensionType))
+                        : metaType.IsAssignableFrom(x.extensionType))
+                    .Select(l => l.Name);
+                AppendResults (results, partial_name, extensions);
+            }
 
 			throw new CompletionResult (partial_name == null ? "" : partial_name, results.Distinct ().ToArray ());
 		}

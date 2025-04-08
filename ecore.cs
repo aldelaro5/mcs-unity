@@ -3807,7 +3807,7 @@ namespace Mono.CSharp {
 
 			int arity = type_arguments == null ? 0 : type_arguments.Count;
 
-			candidates = candidates.Container.LookupExtensionMethod (candidates.Context, Name, arity, candidates.LookupIndex);
+			candidates = candidates.Container.LookupExtensionMethod (candidates.Context, Name, arity, candidates.LookupIndex, false);
 			if (candidates == null)
 				return null;
 
@@ -4312,7 +4312,7 @@ namespace Mono.CSharp {
 				return null;
 
 			int arity = type_arguments == null ? 0 : type_arguments.Count;
-			var methods = rc.LookupExtensionMethod (Methods[0].Name, arity);
+			var methods = rc.LookupExtensionMethod (Methods[0].Name, arity, false);
 			if (methods == null)
 				return null;
 
