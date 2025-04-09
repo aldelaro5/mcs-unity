@@ -78,7 +78,7 @@ namespace Mono.CSharp
                 1 +
                 // ref_only
                 4 +
-                // These are only there on old mono
+                // These are only there on new mono
                 (
                     isOldMono ? 0 :
                     // wrap_non_exception_throws
