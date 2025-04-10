@@ -93,7 +93,10 @@ namespace Mono.CSharp
 
 			// FIXME: Importer needs this assembly for internalsvisibleto
 			module.SetDeclaringAssembly (new AssemblyDefinitionDynamic (module, "evaluator"));
-			importer = new ReflectionImporter (module, ctx.BuiltinTypes);
+            importer = new ReflectionImporter(module, ctx.BuiltinTypes)
+            {
+                IgnorePrivateMembers = false
+            };
 
 			InteractiveBaseClass = typeof (InteractiveBase);
 			fields = new Dictionary<string, Tuple<FieldSpec, FieldInfo>> ();

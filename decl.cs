@@ -1172,53 +1172,54 @@ namespace Mono.CSharp {
 		// Is this member accessible from invocation context
 		//
 		public bool IsAccessible (IMemberContext ctx)
-		{
-			var ma = Modifiers & Modifiers.AccessibilityMask;
-			if (ma == Modifiers.PUBLIC)
-				return true;
-
-			var parentType = /* this as TypeSpec ?? */ DeclaringType;
-			var ctype = ctx.CurrentType;
-
-			if (ma == Modifiers.PRIVATE) {
-				if (ctype == null || parentType == null)
-					return false;
-				//
-				// It's only accessible to the current class or children
-				//
-				if (parentType.MemberDefinition == ctype.MemberDefinition)
-					return true;
-
-				return TypeManager.IsNestedChildOf (ctype, parentType.MemberDefinition);
-			}
-
-			if ((ma & Modifiers.INTERNAL) != 0) {
-				bool b;
-				var assembly = ctype == null ? ctx.Module.DeclaringAssembly : ctype.MemberDefinition.DeclaringAssembly;
-
-				if (parentType == null) {
-					b = ((ITypeDefinition) MemberDefinition).IsInternalAsPublic (assembly);
-				} else {
-					b = DeclaringType.MemberDefinition.IsInternalAsPublic (assembly);
-				}
-
-				if (b || ma == Modifiers.INTERNAL)
-					return b;
-			}
-
-			//
-			// Checks whether `ctype' is a subclass or nested child of `parentType'.
-			//
-			while (ctype != null) {
-				if (TypeManager.IsFamilyAccessible (ctype, parentType))
-					return true;
-
-				// Handle nested types.
-				ctype = ctype.DeclaringType;	// TODO: Untested ???
-			}
-
-			return false;
-		}
+        {
+            return true;
+            // var ma = Modifiers & Modifiers.AccessibilityMask;
+            // if (ma == Modifiers.PUBLIC)
+            // 	return true;
+            //
+            // var parentType = /* this as TypeSpec ?? */ DeclaringType;
+            // var ctype = ctx.CurrentType;
+            //
+            // if (ma == Modifiers.PRIVATE) {
+            // 	if (ctype == null || parentType == null)
+            // 		return false;
+            // 	//
+            // 	// It's only accessible to the current class or children
+            // 	//
+            // 	if (parentType.MemberDefinition == ctype.MemberDefinition)
+            // 		return true;
+            //
+            // 	return TypeManager.IsNestedChildOf (ctype, parentType.MemberDefinition);
+            // }
+            //
+            // if ((ma & Modifiers.INTERNAL) != 0) {
+            // 	bool b;
+            // 	var assembly = ctype == null ? ctx.Module.DeclaringAssembly : ctype.MemberDefinition.DeclaringAssembly;
+            //
+            // 	if (parentType == null) {
+            // 		b = ((ITypeDefinition) MemberDefinition).IsInternalAsPublic (assembly);
+            // 	} else {
+            // 		b = DeclaringType.MemberDefinition.IsInternalAsPublic (assembly);
+            // 	}
+            //
+            // 	if (b || ma == Modifiers.INTERNAL)
+            // 		return b;
+            // }
+            //
+            // //
+            // // Checks whether `ctype' is a subclass or nested child of `parentType'.
+            // //
+            // while (ctype != null) {
+            // 	if (TypeManager.IsFamilyAccessible (ctype, parentType))
+            // 		return true;
+            //
+            // 	// Handle nested types.
+            // 	ctype = ctype.DeclaringType;	// TODO: Untested ???
+            // }
+            //
+            // return false;
+        }
 
 		//
 		// Returns member CLS compliance based on full member hierarchy
