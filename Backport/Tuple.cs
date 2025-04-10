@@ -9,8 +9,17 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 #pragma warning disable CA1036 // Override methods on comparable types
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 
 namespace System {
+    /// <summary>
+    /// Helper so we can call some tuple methods recursively without knowing the underlying types.
+    /// </summary>
+    internal interface ITupleInternal : ITuple {
+        string ToString(StringBuilder sb);
+        int GetHashCode(IEqualityComparer comparer);
+    }
+
     public static class Tuple {
         public static Tuple<T1> Create<T1>(T1 item1) {
             return new Tuple<T1>(item1);
