@@ -18,7 +18,4 @@
     <DebugType>none</DebugType>
     <DefineConstants>NET_4_5</DefineConstants>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="MonoMod.Backports" Version="1.1.0-prerelease.2" />
-  </ItemGroup>
 </Project>
