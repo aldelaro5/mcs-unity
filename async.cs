@@ -1054,12 +1054,12 @@ namespace Mono.CSharp
 
 		public bool IsAvailableForReuse {
 			get {
-				var field = (Field) spec.MemberDefinition;
-				return field.IsAvailableForReuse;
+				var @field = (Field) spec.MemberDefinition;
+				return @field.IsAvailableForReuse;
 			}
 			private set {
-				var field = (Field) spec.MemberDefinition;
-				field.IsAvailableForReuse = value;
+				var @field = (Field) spec.MemberDefinition;
+				@field.IsAvailableForReuse = value;
 			}
 		}
 
