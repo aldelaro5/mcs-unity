@@ -752,7 +752,7 @@ namespace Mono.CSharp {
 
 		public Field Field {
 			get {
-				return field;
+				return @field;
 			}
 		}
 
