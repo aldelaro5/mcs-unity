@@ -50,7 +50,7 @@ namespace Mono.CSharp {
 			List<string> res = null;
 
 			foreach (var ns in all_namespaces) {
-				var type = ns.Value.LookupType (ctx, name, arity, LookupMode.Normal, Location.Null);
+				var type = ns.Value.LookupType (ctx, name, arity, LookupMode.IgnoreAccessibility, Location.Null);
 				if (type != null) {
 					if (res == null)
 						res = new List<string> ();

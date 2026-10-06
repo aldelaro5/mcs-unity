@@ -2763,7 +2763,7 @@ namespace Mono.CSharp {
 
 		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc, bool allowUnboundTypeArguments)
 		{
-			FullNamedExpression fne = mc.LookupNamespaceOrType (Name, Arity, LookupMode.Normal, loc);
+			FullNamedExpression fne = mc.LookupNamespaceOrType (Name, Arity, LookupMode.IgnoreAccessibility, loc);
 
 			if (fne != null) {
 				if (fne.Type != null && Arity > 0) {
